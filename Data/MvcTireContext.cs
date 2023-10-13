@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MvcTire.Models;
 
-namespace MvcMovie.Data
+namespace MvcTire.Data
 {
-    public class MvcMovieContext : DbContext
+    public class MvcTireContext : DbContext
     {
-        public MvcMovieContext(DbContextOptions<MvcMovieContext> options)
+        public MvcTireContext(DbContextOptions<MvcTireContext> options)
             : base(options)
         {
         }
