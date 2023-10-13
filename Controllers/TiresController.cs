@@ -20,9 +20,23 @@ namespace MvcTire.Controllers
         }
 
         // GET: Tires
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Tire.ToListAsync());
+            var tires = from t in _context.Tire
+                         select t;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                tires = tires.Where(s => s.Brand.Contains(searchString));
+            }
+
+            return View(await tires.ToListAsync());
+        }
+
+        [HttpPost]
+        public string Index(string searchString, bool notUsed)
+        {
+            return "From [HttpPost]Index: filter on " + searchString;
         }
 
         // GET: Tires/Details/5
