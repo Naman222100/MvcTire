@@ -20,19 +20,49 @@ namespace MvcTire.Controllers
         }
 
         // GET: Tires
-        public async Task<IActionResult> Index(string searchString)
+        //public async Task<IActionResult> Index(string searchString)
+        //{
+        //    var tires = from t in _context.Tire
+        //                 select t;
+
+        //    if (!String.IsNullOrEmpty(searchString))
+        //    {
+        //        tires = tires.Where(s => s.Brand.Contains(searchString));
+        //    }
+
+        //    return View(await tires.ToListAsync());
+        //}
+        // updated the code
+
+        // GET: Movies
+        public async Task<IActionResult> Index(string tireColor, string searchString)
         {
+            // Use LINQ to get list of genres.
+            IQueryable<string> colorQuery = from t in _context.Tire
+                                            orderby t.Color
+                                            select t.Color;
+
             var tires = from t in _context.Tire
                          select t;
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 tires = tires.Where(s => s.Brand.Contains(searchString));
             }
 
-            return View(await tires.ToListAsync());
-        }
+            if (!string.IsNullOrEmpty(tireColor))
+            {
+                tires = tires.Where(x => x.Color == tireColor);
+            }
 
+            var tireColorVM = new TireColorViewModel
+            {
+                Colors = new SelectList(await colorQuery.Distinct().ToListAsync()),
+                Tires = await tires.ToListAsync()
+            };
+
+            return View(tireColorVM);
+        }
         [HttpPost]
         public string Index(string searchString, bool notUsed)
         {
@@ -68,7 +98,7 @@ namespace MvcTire.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Brand,Colour,Price,Size")] Tire tire)
+        public async Task<IActionResult> Create([Bind("Id,Brand,Color,Price,Size")] Tire tire)
         {
             if (ModelState.IsValid)
             {
@@ -100,7 +130,7 @@ namespace MvcTire.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Colour,Price,Size")] Tire tire)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Brand,Color,Price,Size,Rating")] Tire tire)
         {
             if (id != tire.Id)
             {
